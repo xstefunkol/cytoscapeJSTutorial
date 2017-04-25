@@ -3,7 +3,178 @@
 
 <head>
     <title>Tutorial 1: Getting Started</title>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.js"></script>
     <script src='cytoscape.js'></script>
+    <script src="cytoscape-qtip.js"></script>
+    <script src="https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre.min.js"></script>
+	<script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.5.0/cytoscape-dagre.js"></script>
+    <script>
+		function ajax_get_json(){
+			var data = {};
+    		var xhttp = new XMLHttpRequest();
+    		xhttp.open("GET", "elements.json", true);
+    		xhttp.setRequestHeader("Content-type", "application/json", true);
+    		xhttp.onreadystatechange = function() {
+	    		if(xhttp.readyState == 4 && xhttp.status == 200) {
+		   			var data = JSON.parse(xhttp.responseText);
+		   			var cy = window.cy = cytoscape({
+					    container: document.getElementById('cy'),
+					    elements: data,
+					    wheelSensitivity: 0.5,
+					    layout: {
+			    	        name: 'dagre'
+			    	    },
+			    	    style: [
+			    	        {
+			    	            selector: 'node',
+			    	            style: {
+			    	                shape: 'rectangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'white',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.Resource',
+			    	            style: {
+			    	                shape: 'rectangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'white',
+			    	                'border-width': 4,
+			    	                'border-color': 'black',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.ObjectTNode',
+			    	            style: {
+			    	                shape: 'rectangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'white',
+			    	                'border-width': 3,
+			    	                'border-color': 'black',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.UserRep',
+			    	            style: {
+			    	                shape: 'hexagon',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'red',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.ResourceDataItem',
+			    	            style: {
+			    	                shape: 'ellipse',
+			    	                'background-color': 'blue',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.RoleRep',
+			    	            style: {
+			    	                shape: 'hexagon',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'green',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: '.OrgRep',
+			    	            style: {
+			    	                shape: 'hexagon',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': 'orange',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+							{
+			    	            selector: '.ConstantEXP',
+			    	            style: {
+			    	                shape: 'triangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': '#6ca9ad',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+							{
+			    	            selector: '.AsIsEXP',
+			    	            style: {
+			    	                shape: 'triangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': '#f7ebdc',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+							{
+			    	            selector: '.ScriptEXP',
+			    	            style: {
+			    	                shape: 'triangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': '#935b3a',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+							{
+			    	            selector: '.ItemPathEXP',
+			    	            style: {
+			    	                shape: 'triangle',
+			    	                'text-wrap': 'wrap',
+			    	                'background-color': '#b68d96',
+			    	                label: 'data(name)'
+			    	            }
+			    	        },
+			    	        {
+			    	            selector: 'edge',
+			    	            style: {
+			    	                'background-color': 'black',
+			    	                label: 'data(label)',
+			    	                'curve-style': 'bezier',
+			    	                'target-arrow-shape': 'triangle',
+			    	                'target-arrow-color': 'black',
+			    	                'line-style': function( ele ){ return ele.data('style') }
+			    	            }
+			    	        }]
+					});
+		   		// just use the regular qtip api but on cy elements
+					cy.nodes().qtip({
+						content: function(){ return 'Id ' + this.id() },
+						position: {
+							my: 'top center',
+							at: 'bottom center'
+						},
+						style: {
+							classes: 'qtip-bootstrap',
+							tip: {
+								width: 16,
+								height: 8
+							}
+						}
+					});
+					cy.edges().qtip({
+						content: function(){ return this.data('mapping') },
+						position: {
+							my: 'top center',
+							at: 'bottom center'
+						},
+						style: {
+							classes: 'qtip-bootstrap',
+							tip: {
+								width: 16,
+								height: 8
+							}
+						}
+					});
+	    		}
+    		}
+    		xhttp.send(null);
+		}
+	</script>
 </head>
 
 <style>
@@ -18,98 +189,7 @@
 
 <body>
     <div id="cy"></div>
-    <script>
-    var cy = cytoscape({
-    	  container: document.getElementById('cy'),
-    	  elements: [
-    		  // nodes
-    		  { data: { id: '1', name: 'Default Account \n ACCOUNT \n default \n (AccountObjectClass)' } },
-    		  { data: { id: '2', name: 'lastname', parent: '1' }, classes: 'Class1' },
-    		  { data: { id: '3', name: 'firstname', parent: '1' }, classes: 'Class1' },
-    		  { data: { id: '4', name: 'name', parent: '1' }, classes: 'Class1' },
-    		  { data: { id: '5', name: 'administrativeStatus', parent: '1' }, classes: 'Class1' },
-    		  { data: { id: '6', name: 'password', parent: '1' }, classes: 'Class1' },
-    		  
-    		  { data: { id: '7', name: 'User \n familyName' } },
-    		  { data: { id: '8', name: 'User \n givenName' } },
-    		  { data: { id: '9', name: 'User \n name' } },
-    		  { data: { id: '10', name: 'User \n activation/administrativeStatus' } },
-    		  { data: { id: '11', name: 'User \n credentials/password' } },
-    		  // edges
-    		  {
-    		    data: {
-    		      id: 'a',
-    		      source: '2',
-    		      target: '7'
-    		    }
-    		  },
-    		  {
-      		    data: {
-      		      id: 'b',
-      		      source: '3',
-      		      target: '8'
-      		    }
-      		  },
-      		{
-      		    data: {
-      		      id: 'c',
-      		      source: '4',
-      		      target: '9'
-      		    }
-      		  },
-      		{
-      		    data: {
-      		      id: 'd',
-      		      source: '5',
-      		      target: '10'
-      		    }
-      		  },
-      		{
-      		    data: {
-      		      id: 'e',
-      		      source: '6',
-      		      target: '11',
-      		      name: 'generate'
-      		    }
-      		  },
-    		],
-    	    layout: {
-    	        name: 'grid'
-    	    },
-    	    style: [
-    	        {
-    	            selector: 'node',
-    	            style: {
-    	                shape: 'rectangle',
-    	                'text-wrap': 'wrap',
-    	                'background-color': 'red',
-    	                'background-opacity': '0.3',
-    	                label: 'data(name)'
-    	            }
-    	        },
-    	        {
-    	            selector: '.Class1',
-    	            style: {
-    	                shape: 'triangle',
-    	                'background-color': 'green',
-    	                label: 'data(name)'
-    	            }
-    	        },
-    	        {
-    	            selector: 'edge',
-    	            style: {
-    	                'background-color': 'black',
-    	                label: 'data(name)',
-    	                'curve-style': 'bezier',
-    	                'target-arrow-shape': 'triangle',
-    	                'source-arrow-shape': 'triangle',
-    	                'target-arrow-color': 'black',
-    	                'source-arrow-color': 'black',
-    	                'line-style': 'dashed'
-    	            }
-    	        }]
-    	});
-    </script>
+    <script>ajax_get_json();</script>
 </body>
 
 </html>
